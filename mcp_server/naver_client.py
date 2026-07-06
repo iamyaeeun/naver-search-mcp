@@ -2,9 +2,18 @@
 from __future__ import annotations
 
 import os
+import urllib.error
 import urllib.parse
 import urllib.request
 import json
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Resolve relative to this file, not the process cwd, so credentials load
+# consistently whether run via `python3 -m mcp_server.server`, `mcp dev`
+# (which execs this file standalone from a different sys.path root), or pytest.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 NAVER_SEARCH_BASE_URL = "https://openapi.naver.com/v1/search"
 
@@ -55,6 +64,12 @@ def search(category: str, query: str, display: int = 5) -> dict:
         "X-Naver-Client-Id": client_id,
         "X-Naver-Client-Secret": client_secret,
     })
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        body = json.loads(resp.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        # Naver's error body (errorCode/errorMessage) is far more actionable
+        # than urllib's generic "HTTP Error 401: Unauthorized".
+        detail = e.read().decode("utf-8", errors="replace")
+        raise urllib.error.HTTPError(e.url, e.code, f"{e.reason}: {detail}", e.headers, None) from None
     return {"source": "live", "items": body.get("items", [])}
