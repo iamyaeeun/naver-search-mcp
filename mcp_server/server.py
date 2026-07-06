@@ -2,11 +2,19 @@
 
 Run with:
     python3 -m mcp_server.server
+    mcp dev mcp_server/server.py
 or register it in Claude Code's MCP config pointing at this file.
 """
 from mcp.server.fastmcp import FastMCP
 
-from mcp_server.naver_client import search
+try:
+    # `python3 -m mcp_server.server` — loaded as part of the mcp_server package.
+    from mcp_server.naver_client import search
+except ImportError:
+    # `mcp dev mcp_server/server.py` — mcp's CLI execs this file standalone and
+    # only puts its own directory (mcp_server/) on sys.path, not the project
+    # root, so the package-qualified import above isn't resolvable there.
+    from naver_client import search
 
 mcp = FastMCP("naver-search")
 
