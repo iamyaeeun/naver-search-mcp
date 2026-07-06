@@ -1,4 +1,7 @@
-"""Thin wrapper around the Naver Search Open API (https://developers.naver.com/docs/serviceapi/search)."""
+"""Thin wrapper around the Naver Search API as exposed through NAVER API HUB
+(https://api.ncloud-docs.com/docs/naver-api-hub-search-news), not the legacy
+developers.naver.com console — the two issue different credentials and use
+different auth headers, and API HUB keys are rejected by the legacy ones."""
 from __future__ import annotations
 
 import os
@@ -15,8 +18,12 @@ from dotenv import load_dotenv
 # (which execs this file standalone from a different sys.path root), or pytest.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-NAVER_SEARCH_BASE_URL = "https://openapi.naver.com/v1/search"
+NAVER_SEARCH_BASE_URL = "https://naverapihub.apigw.ntruss.com/search/v1"
 
+# "shop" isn't confirmed against API HUB's docs (only news/blog are) — it's
+# also absent from API HUB apps that haven't done the separate shopping
+# business verification, so this path is a best-effort guess pending an
+# app that actually has it enabled.
 SUPPORTED_CATEGORIES = ("news", "blog", "shop")
 
 _MOCK_RESULTS = {
@@ -58,11 +65,11 @@ def search(category: str, query: str, display: int = 5) -> dict:
         return {"source": "mock", "items": _MOCK_RESULTS[category][:display]}
 
     client_id, client_secret = creds
-    params = urllib.parse.urlencode({"query": query, "display": display})
-    url = f"{NAVER_SEARCH_BASE_URL}/{category}.json?{params}"
+    params = urllib.parse.urlencode({"query": query, "display": display, "format": "json"})
+    url = f"{NAVER_SEARCH_BASE_URL}/{category}?{params}"
     req = urllib.request.Request(url, headers={
-        "X-Naver-Client-Id": client_id,
-        "X-Naver-Client-Secret": client_secret,
+        "X-NCP-APIGW-API-KEY-ID": client_id,
+        "X-NCP-APIGW-API-KEY": client_secret,
     })
     try:
         with urllib.request.urlopen(req, timeout=5) as resp:
