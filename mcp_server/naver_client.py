@@ -24,7 +24,7 @@ NAVER_SEARCH_BASE_URL = "https://naverapihub.apigw.ntruss.com/search/v1"
 # also absent from API HUB apps that haven't done the separate shopping
 # business verification, so this path is a best-effort guess pending an
 # app that actually has it enabled.
-SUPPORTED_CATEGORIES = ("news", "blog", "shop")
+SUPPORTED_CATEGORIES = ("news", "blog", "image")
 
 _MOCK_RESULTS = {
     "news": [
@@ -33,8 +33,8 @@ _MOCK_RESULTS = {
     "blog": [
         {"title": "샘플 블로그 포스트", "link": "https://example.com/blog/1", "description": "네이버 검색 API 키가 설정되지 않아 반환된 목업 데이터입니다."},
     ],
-    "shop": [
-        {"title": "샘플 쇼핑 상품", "link": "https://example.com/shop/1", "lprice": "10000", "description": "네이버 검색 API 키가 설정되지 않아 반환된 목업 데이터입니다."},
+    "image": [
+        {"title": "샘플 이미지", "link": "https://example.com/image/1", "thumbnail": "https://example.com/thumb/1.jpg", "sizeheight": "300", "sizewidth": "400"},
     ],
 }
 
@@ -51,8 +51,8 @@ def _get_credentials() -> tuple[str, str] | None:
     return client_id, client_secret
 
 
-def search(category: str, query: str, display: int = 5) -> dict:
-    """Search Naver's `category` (news/blog/shop) for `query`.
+def search(category: str, query: str, display: int = 5, **extra_params) -> dict:
+    """Search Naver's `category` (news/blog/image) for `query`.
 
     Falls back to mock data when NAVER_CLIENT_ID / NAVER_CLIENT_SECRET are not set,
     so the MCP server is usable for structural testing before real API keys exist.
@@ -65,7 +65,7 @@ def search(category: str, query: str, display: int = 5) -> dict:
         return {"source": "mock", "items": _MOCK_RESULTS[category][:display]}
 
     client_id, client_secret = creds
-    params = urllib.parse.urlencode({"query": query, "display": display, "format": "json"})
+    params = urllib.parse.urlencode({"query": query, "display": display, "format": "json", **extra_params})
     url = f"{NAVER_SEARCH_BASE_URL}/{category}?{params}"
     req = urllib.request.Request(url, headers={
         "X-NCP-APIGW-API-KEY-ID": client_id,

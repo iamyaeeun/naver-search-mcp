@@ -1,4 +1,4 @@
-"""MCP server exposing the Naver Search Open API (news/blog/shop) as tools.
+"""MCP server exposing the Naver Search Open API (news/blog/image) as tools.
 
 Run with:
     python3 -m mcp_server.server
@@ -32,9 +32,16 @@ def search_blog(query: str, display: int = 5) -> dict:
 
 
 @mcp.tool()
-def search_shop(query: str, display: int = 5) -> dict:
-    """Search Naver Shopping for the given query."""
-    return search("shop", query, display)
+def search_img(query: str, display: int = 5, sort: str = "sim", filter: str = "all") -> dict:
+    """Search Naver Images for the given query.
+
+    Args:
+        query: Search keyword (UTF-8).
+        display: Number of results (1-100, default 5).
+        sort: "sim" (relevance) or "date".
+        filter: Size filter — "all", "large", "medium", or "small".
+    """
+    return search("image", query, display, sort=sort, filter=filter)
 
 
 if __name__ == "__main__":
