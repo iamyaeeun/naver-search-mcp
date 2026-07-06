@@ -24,7 +24,7 @@ NAVER_SEARCH_BASE_URL = "https://naverapihub.apigw.ntruss.com/search/v1"
 # also absent from API HUB apps that haven't done the separate shopping
 # business verification, so this path is a best-effort guess pending an
 # app that actually has it enabled.
-SUPPORTED_CATEGORIES = ("news", "blog", "image")
+SUPPORTED_CATEGORIES = ("news", "blog", "image", "webkr")
 
 _MOCK_RESULTS = {
     "news": [
@@ -35,6 +35,9 @@ _MOCK_RESULTS = {
     ],
     "image": [
         {"title": "샘플 이미지", "link": "https://example.com/image/1", "thumbnail": "https://example.com/thumb/1.jpg", "sizeheight": "300", "sizewidth": "400"},
+    ],
+    "webkr": [
+        {"title": "샘플 <b>웹</b> 문서", "link": "https://example.com/web/1", "description": "네이버 검색 API 키가 설정되지 않아 반환된 목업 데이터입니다."},
     ],
 }
 
