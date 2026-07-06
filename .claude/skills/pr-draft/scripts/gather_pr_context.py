@@ -13,6 +13,12 @@ from pathlib import Path
 
 def run(cmd: list[str]) -> str:
     result = subprocess.run(cmd, capture_output=True, text=True)
+    # check_naming.py legitimately exits 1 when it finds violations (with the
+    # report on stdout), so a non-zero code alone isn't an error — but empty
+    # stdout alongside it means the command actually crashed (e.g. wrong
+    # python3 on PATH), and that must not be swallowed into a blank section.
+    if result.returncode != 0 and not result.stdout.strip():
+        return f"(command failed: {' '.join(cmd)})\n{result.stderr.strip()}"
     return result.stdout.strip()
 
 

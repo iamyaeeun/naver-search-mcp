@@ -1,4 +1,6 @@
 """Thin wrapper around the Naver Search Open API (https://developers.naver.com/docs/serviceapi/search)."""
+from __future__ import annotations
+
 import os
 import urllib.parse
 import urllib.request

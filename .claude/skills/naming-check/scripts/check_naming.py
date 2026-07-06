@@ -11,6 +11,8 @@ Usage:
     python3 check_naming.py --cached        # diff staged changes
     python3 check_naming.py main...HEAD     # diff against a base ref
 """
+from __future__ import annotations
+
 import re
 import subprocess
 import sys
