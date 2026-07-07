@@ -7,7 +7,7 @@ Skill을 활용한 가벼운 컨벤션 체크 + PR 초안 자동화 워크플로
 
 - `mcp_server/` — MCP 서버 본체
   - `naver_client.py`: Naver Search Open API 호출 (키가 없으면 mock 데이터 반환)
-  - `server.py`: FastMCP로 `search_news` / `search_blog` / `search_shop` 툴 노출
+  - `server.py`: FastMCP로 `search_news` / `search_blog` / `search_img` / `search_webkr` 툴 노출
 - `.claude/skills/naming-check/` — diff에 새로 추가된 함수/변수명만 검사하는 skill
 - `.claude/skills/pr-draft/` — diff + naming-check 결과로 PR 본문 초안을 만드는 skill
 - `tests/` — mock 모드 기준 동작 테스트
