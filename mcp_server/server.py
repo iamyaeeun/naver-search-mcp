@@ -1,4 +1,4 @@
-"""MCP server exposing the Naver Search Open API (news/blog/image) as tools.
+"""MCP server exposing the Naver Search Open API (news/blog/image/webkr) as tools.
 
 Run with:
     python3 -m mcp_server.server
@@ -42,6 +42,12 @@ def search_img(query: str, display: int = 5, sort: str = "sim", filter: str = "a
         filter: Size filter — "all", "large", "medium", or "small".
     """
     return search("image", query, display, sort=sort, filter=filter)
+
+
+@mcp.tool()
+def search_webkr(query: str, display: int = 5) -> dict:
+    """Search Naver Korean Web documents for the given query."""
+    return search("webkr", query, display)
 
 
 if __name__ == "__main__":
